@@ -7,15 +7,18 @@ import "./index.css"
 import Menu from "./layouts/Menu.tsx"
 import Header from "./layouts/Header.tsx"
 import WebRouter from "./router.tsx"
+import { ModalProvider } from "./contexts/ModalContext.tsx"
 
 createRoot(document.getElementById("root")!).render(
     <StrictMode>
         <BrowserRouter>
-            <Menu>
-                <Header>
-                    <WebRouter />
-                </Header>
-            </Menu>
+            <ModalProvider>
+                <Menu>
+                    <Header>
+                        <WebRouter />
+                    </Header>
+                </Menu>
+            </ModalProvider>
         </BrowserRouter>
     </StrictMode>
 )
