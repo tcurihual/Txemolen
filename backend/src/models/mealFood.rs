@@ -7,7 +7,7 @@ pub struct Model {
     pub meal_id: i32,
     #[sea_orm(primary_key)]
     pub food_code: String,
-    pub servings: f32, // Cantidad de porciones consumidas
+    pub servings: f32, 
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

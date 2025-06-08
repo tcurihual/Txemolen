@@ -1,8 +1,5 @@
 //! Run with
 //! systemfd --no-pid -s http::3000 -- cargo watch -x run
-//! ```not_rust
-//! cargo run -p auto-reload
-//! ```
 
 use axum::{response::Html, routing::get, Router};
 use dotenvy::dotenv;
@@ -10,8 +7,6 @@ use listenfd::ListenFd;
 use sea_orm::Database;
 use std::env;
 use tokio::net::TcpListener;
-
-mod entities;
 
 #[tokio::main]
 async fn main() {
@@ -35,7 +30,7 @@ async fn main() {
         None => TcpListener::bind("127.0.0.1:3000").await.unwrap(),
     };
 
-    println!("Servidor escuchando en {}", listener.local_addr().unwrap());
+    println!("🚀 Servidor escuchando en {}", listener.local_addr().unwrap());
     axum::serve(listener, app).await.unwrap();
 }
 

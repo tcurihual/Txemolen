@@ -8,8 +8,8 @@ pub struct Model {
     pub id: i32,
     pub date: NaiveDate,
     pub completed: bool,
-    pub user_id: i32, // FK a user
-    pub daily_goal_id: i32, // FK a daily_goal
+    pub user_id: i32,
+    pub daily_goal_id: i32, 
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

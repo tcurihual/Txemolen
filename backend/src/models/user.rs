@@ -7,13 +7,13 @@ pub struct Model {
     pub id: i32,
     pub name: String,
     pub email: String,
-    pub password: String, // Debes hashearla
+    pub password: String,
     pub gender: String,
     pub age: i32,
     pub weight: f32,
     pub height: f32,
     pub fat_percentage: Option<f32>,
-    pub daily_goal_id: i32, // FK a daily_goal
+    pub daily_goal_id: i32, 
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
