@@ -9,7 +9,7 @@ const Header: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [dropdown, setDropdown] = useState(false)
 
     const { openModal } = useModal()
-
+    //
     const handleOpenModal = (text: string) => {
         openModal({
             component: <p>{text}</p>,
