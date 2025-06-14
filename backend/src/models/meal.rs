@@ -40,4 +40,16 @@ pub enum Relation {
     MealFoods,
 }
 
+impl Related<super::day::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::Day.def()
+    }
+}
+
+impl Related<super::meal_food::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::MealFoods.def()
+    }
+}
+
 impl ActiveModelBehavior for ActiveModel {}

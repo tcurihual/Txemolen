@@ -1,12 +1,16 @@
 //! Run with
 //! systemfd --no-pid -s http::3000 -- cargo watch -x run
 
-use axum::{response::Html, routing::get, Router};
+use axum::Router;
 use dotenvy::dotenv;
 use listenfd::ListenFd;
 use sea_orm::Database;
 use std::env;
 use tokio::net::TcpListener;
+
+mod models;
+mod controllers;
+mod routes;
 
 #[tokio::main]
 async fn main() {
@@ -18,7 +22,7 @@ async fn main() {
         .expect("Error al conectar con la base de datos");
 
     let app = Router::new()
-        .route("/", get(handler))
+        .merge(routes::user_routes::user_routes())
         .with_state(conn); 
 
     let mut listenfd = ListenFd::from_env();
@@ -32,8 +36,4 @@ async fn main() {
 
     println!("🚀 Servidor escuchando en {}", listener.local_addr().unwrap());
     axum::serve(listener, app).await.unwrap();
-}
-
-async fn handler() -> Html<&'static str> {
-    Html("<h1>Hola Mundo!</h1>")
 }

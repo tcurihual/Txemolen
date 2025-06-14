@@ -1,15 +1,33 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { AnimatePresence, motion } from "motion/react"
 
 import { BsPersonCircle } from "react-icons/bs"
 import { IoIosArrowDown } from "react-icons/io"
 import { useModal } from "../contexts/ModalContext"
+import { useLocation } from "react-router-dom"
 
 const Header: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [dropdown, setDropdown] = useState(false)
+    const [title, setTitle] = useState("")
 
     const { openModal } = useModal()
-    //
+
+    const location = useLocation()
+
+    useEffect(() => {
+        if (location.pathname === "/") {
+            setTitle("Inicio")
+        } else if (location.pathname === "/biometrica") {
+            setTitle("Biometrica")
+        } else if (location.pathname === "/calendario") {
+            setTitle("Calendario")
+        } else if (location.pathname === "/recetas") {
+            setTitle("Recetas")
+        } else {
+            setTitle("")
+        }
+    }, [location.pathname])
+
     const handleOpenModal = (text: string) => {
         openModal({
             component: <p>{text}</p>,
@@ -37,7 +55,7 @@ const Header: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 className="flex flex-row h-[11%] justify-between items-center px-[4%] border-b-5 border-[#F6F6F6] cursor-pointer relative"
                 onClick={handleRotation}
             >
-                <p className="text-[28px]">Inicio</p>
+                <p className="text-[28px]">{title}</p>
                 <div className="flex flex-row items-center gap-[20px]">
                     <div className="w-[50px] h-[50px] rounded-full">
                         <BsPersonCircle className="w-full h-full" />
