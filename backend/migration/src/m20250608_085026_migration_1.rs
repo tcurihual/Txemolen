@@ -131,7 +131,7 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(User::Weight).float().not_null())
                     .col(ColumnDef::new(User::Height).float().not_null())
                     .col(ColumnDef::new(User::FatPercentage).float())
-                    .col(ColumnDef::new(User::DailyGoalId).integer().not_null())
+                    .col(ColumnDef::new(User::DailyGoalId).integer())
                     .foreign_key(
                         ForeignKey::create()
                             .name("fk-user-daily_goal")

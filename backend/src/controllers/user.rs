@@ -10,7 +10,7 @@ use sea_orm::{
     Set
 };
 
-use crate::models::user::{Entity, Model, ActiveModel};
+use crate::models::user::{Entity, Model, ActiveModel, UserDTO};
 
 #[axum::debug_handler]
 pub async fn get(
@@ -39,7 +39,7 @@ pub async fn get_by_id(
 #[axum::debug_handler]
 pub async fn create(
     State(conn): State<DatabaseConnection>,
-    Json(user_data): Json<Model>,
+    Json(user_data): Json<UserDTO>,
 ) -> Result<Json<Model>, (axum::http::StatusCode, String)> {
     let user = ActiveModel {
         name: Set(user_data.name),
