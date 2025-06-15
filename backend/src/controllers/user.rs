@@ -1,7 +1,9 @@
 use axum::{
     extract::{Path, State},
-    Json, 
+    {Extension, Json}, 
 };
+
+use crate::{utils::{hash, jwt::{self, JwtConfig}}};
 
 use sea_orm::{
     DatabaseConnection,
@@ -10,9 +12,8 @@ use sea_orm::{
     Set
 };
 
-use crate::models::user::{Entity, Model, ActiveModel, UserDTO};
+use crate::models::user::{Entity, Model, ActiveModel, UserDTO, AuthResponse};
 
-#[axum::debug_handler]
 pub async fn get(
     State(conn): State<DatabaseConnection>,
 ) -> Result<Json<serde_json::Value>, (axum::http::StatusCode, String)> {
@@ -21,7 +22,6 @@ pub async fn get(
     Ok(Json(serde_json::to_value(users).unwrap()))
 }
 
-#[axum::debug_handler]
 pub async fn get_by_id(
     State(conn): State<DatabaseConnection>,
     Path(id): Path<i32>,
@@ -36,15 +36,19 @@ pub async fn get_by_id(
     }
 }
 
-#[axum::debug_handler]
 pub async fn create(
     State(conn): State<DatabaseConnection>,
+    Extension(jwt_config): Extension<JwtConfig>,
     Json(user_data): Json<UserDTO>,
-) -> Result<Json<Model>, (axum::http::StatusCode, String)> {
+) -> Result<Json<AuthResponse>, (axum::http::StatusCode, String)> {
+
+    let hashed_password = hash::hash_password(&user_data.password)
+        .map_err(|e| (axum::http::StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
+
     let user = ActiveModel {
         name: Set(user_data.name),
         email: Set(user_data.email),
-        password: Set(user_data.password),
+        password: Set(hashed_password),
         gender: Set(user_data.gender),
         age: Set(user_data.age),
         weight: Set(user_data.weight),
@@ -57,10 +61,12 @@ pub async fn create(
     .await
     .map_err(|e| (axum::http::StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
 
-    Ok(Json(user))
+    let token = jwt::generate_token(user.id, &jwt_config)
+    .map_err(|e| (axum::http::StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
+
+    Ok(Json(AuthResponse { user, token }))
 }
 
-#[axum::debug_handler]
 pub async fn update(
     State(conn): State<DatabaseConnection>,
     Path(id): Path<i32>,
@@ -91,7 +97,6 @@ pub async fn update(
     Ok(Json(updated_user))
 }
 
-#[axum::debug_handler]
 pub async fn delete(
     State(conn): State<DatabaseConnection>,
     Path(id): Path<i32>,

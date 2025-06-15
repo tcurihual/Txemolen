@@ -49,3 +49,9 @@ pub struct UserDTO {
     pub fat_percentage: Option<f32>,
     pub daily_goal_id: Option<i32>,  
 }
+
+#[derive(Serialize)]
+pub struct AuthResponse {
+    pub user: Model,
+    pub token: String,
+}

@@ -4,13 +4,23 @@
 use axum::Router;
 use dotenvy::dotenv;
 use listenfd::ListenFd;
-use sea_orm::Database;
+use sea_orm::{Database, DatabaseConnection};
 use std::env;
 use tokio::net::TcpListener;
 
-mod models;
+use crate::utils::jwt::{self, JwtConfig};
+
 mod controllers;
+mod middlewares;
+mod models;
 mod routes;
+mod utils;
+
+#[derive(Clone)]
+pub struct AppState {
+    pub db: DatabaseConnection,
+    pub jwt_config: JwtConfig,
+}
 
 #[tokio::main]
 async fn main() {
@@ -21,9 +31,22 @@ async fn main() {
         .await
         .expect("Error al conectar con la base de datos");
 
+    let jwt_config = JwtConfig {
+        secret: std::env::var("JWT_SECRET").expect("JWT_SECRET no configurada"),
+        expiration_hours: env::var("JWT_EXPIRATION_HOURS")
+            .expect("JWT_EXPIRATION_HOURS no configurada")
+            .parse()
+            .unwrap_or(24),
+    };
+
+    let state = AppState {
+        db: conn,
+        jwt_config: jwt_config,
+    };
+
     let app = Router::new()
-        .merge(routes::user_routes::user_routes())
-        .with_state(conn); 
+        .merge(routes::user_routes::user_routes(jwt_config.clone()))
+        .with_state(state); 
 
     let mut listenfd = ListenFd::from_env();
     let listener = match listenfd.take_tcp_listener(0).unwrap() {
