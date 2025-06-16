@@ -8,7 +8,7 @@ use sea_orm::{Database, DatabaseConnection};
 use std::env;
 use tokio::net::TcpListener;
 
-use crate::utils::jwt::{self, JwtConfig};
+use crate::utils::jwt::{JwtConfig};
 
 mod controllers;
 mod middlewares;
@@ -41,11 +41,12 @@ async fn main() {
 
     let state = AppState {
         db: conn,
-        jwt_config: jwt_config,
+        jwt_config: jwt_config.clone(),
     };
 
     let app = Router::new()
         .merge(routes::user_routes::user_routes(jwt_config.clone()))
+        .merge(routes::auth_routes::auth_routes(jwt_config))
         .with_state(state); 
 
     let mut listenfd = ListenFd::from_env();

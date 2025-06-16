@@ -50,8 +50,21 @@ pub struct UserDTO {
     pub daily_goal_id: Option<i32>,  
 }
 
+#[derive(Serialize, Deserialize, Debug)]
+pub struct UserResponse {
+    pub id: i32,
+    pub name: String,
+    pub email: String,
+    pub gender: String,
+    pub age: i32,
+    pub weight: f32,
+    pub height: f32,
+    pub fat_percentage: Option<f32>,
+    pub daily_goal_id: Option<i32>, 
+}
+
 #[derive(Serialize)]
 pub struct AuthResponse {
-    pub user: Model,
+    pub user: UserResponse,
     pub token: String,
 }

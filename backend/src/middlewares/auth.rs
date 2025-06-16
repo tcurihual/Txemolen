@@ -1,31 +1,26 @@
 use axum::{
-    async_trait,
-    extract::{FromRequestParts, State},
-    http::{request::Parts, StatusCode},
-    RequestPartsExt,
+    async_trait, extract::{FromRequestParts}, http::{request::Parts, StatusCode}
 };
-use headers::Authorization;
-use headers::authorization::Bearer;
 
-use crate::utils::jwt::{validate_token, JwtConfig};
+use axum_extra::{
+    headers::{authorization::Bearer, Authorization},
+    TypedHeader,
+};
 
+use crate::utils::jwt::{validate_token};
+use crate::AppState;
+
+#[derive(Debug, Clone)]
 pub struct AuthenticatedUser(pub i32);
 
 #[async_trait]
-impl<S> FromRequestParts<S> for AuthenticatedUser
-where
-    S: Send + Sync,
-{
+impl FromRequestParts<AppState> for AuthenticatedUser {
     type Rejection = (StatusCode, String);
 
-    async fn from_request_parts(parts: &mut Parts, state: &S) -> Result<Self, Self::Rejection> {
-        let State(config) = parts
-            .extract::<State<JwtConfig>>()
-            .await
-            .map_err(|_| (StatusCode::INTERNAL_SERVER_ERROR, "Missing JWT config".to_string()))?;
+    async fn from_request_parts(parts: &mut Parts, state: &AppState) -> Result<Self, Self::Rejection> {
+        let config = state.jwt_config.clone();
 
-        let auth_header = parts
-            .extract::<Authorization<Bearer>>()
+        let TypedHeader(auth_header) = TypedHeader::<Authorization<Bearer>>::from_request_parts(parts, &())
             .await
             .map_err(|_| (StatusCode::UNAUTHORIZED, "Missing authorization header".to_string()))?;
 

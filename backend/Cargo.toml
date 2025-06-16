@@ -7,6 +7,9 @@ edition = "2021"
 
 [dependencies]
 axum = { version = "0.7" , features = ["macros"]}
+axum-extra = { version = "0.9.6", features = ["typed-header"] }
+
+
 listenfd = "1.0.1"
 
 sea-orm = { version = "0.12", features = [
