@@ -1,5 +1,6 @@
 use crate::models::user::{Model, UserDTO, UserResponse};
 
+#[allow(dead_code)]
 pub fn to_dto(user: &Model) -> UserDTO {
     UserDTO {
         name: user.name.clone(),

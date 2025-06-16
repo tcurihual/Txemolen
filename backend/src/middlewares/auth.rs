@@ -30,3 +30,4 @@ impl FromRequestParts<AppState> for AuthenticatedUser {
         Ok(AuthenticatedUser(claims.sub))
     }
 }
+    

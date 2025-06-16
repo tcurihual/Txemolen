@@ -1,3 +1,5 @@
+export const SERVER_URL = import.meta.env.VITE_SERVER_URL as string
+
 export type MealType = "Desayuno" | "Almuerzo" | "Cena" | "Snack"
 
 export interface Food {
@@ -22,6 +24,10 @@ export interface User {
     fat_percentage?: number
     daily_goal_id: number
 }
+
+export interface UserDTO extends Omit<User, "id" | "daily_goal_id"> {}
+
+export interface UserResponse extends Omit<User, "password"> {}
 
 export interface Meal {
     id: number
@@ -49,6 +55,11 @@ export interface DailyGoal {
     protein: number
     carbos: number
     fat: number
+}
+
+export type LoginData = {
+    email: User["email"]
+    password: User["password"]
 }
 
 export interface CreateFoodPayload extends Omit<Food, "code"> {}

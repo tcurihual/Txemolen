@@ -8,7 +8,7 @@ use sea_orm::{
     ActiveModelTrait, EntityTrait, Set
 };
 
-use crate::models::user::{Entity, Model, ActiveModel, UserDTO};
+use crate::models::user::{ActiveModel, Entity, Model, UserDTO, UserResponse};
 use crate::AppState;
 use crate::utils::{hash, conversions};
 
@@ -37,7 +37,7 @@ pub async fn get_by_id(
 pub async fn create(
     State(state): State<AppState>,
     Json(user_data): Json<UserDTO>,
-) -> Result<Json<UserDTO>, (StatusCode, String)> {
+) -> Result<Json<UserResponse>, (StatusCode, String)> {
 
     let hashed_password = hash::hash_password(&user_data.password)
         .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
@@ -58,7 +58,7 @@ pub async fn create(
     .await
     .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
 
-    Ok(Json(conversions::to_dto(&user)))
+    Ok(Json(conversions::to_response(&user)))
 }
 
 pub async fn update(
