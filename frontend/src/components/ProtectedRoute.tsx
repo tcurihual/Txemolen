@@ -19,7 +19,11 @@ export const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
             setIsAuth(result)
         }
         verify().finally(() => setLoading(false))
-    }, [])
+    }, [location.pathname])
+
+    if (isAuth === null) {
+        return <></>
+    }
 
     if (isAuth === false) {
         return (

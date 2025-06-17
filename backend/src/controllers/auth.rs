@@ -1,7 +1,7 @@
 use axum::{
-    extract::State,
     Extension, Json,
     http::StatusCode,
+    extract::State,
 };
 use serde::Deserialize;
 
@@ -13,11 +13,20 @@ use sea_orm::{
     Set
 };
 
-use crate::models::user::{ 
-    AuthResponse, Column as UserColumn, Entity as UserEntity, UserDTO, ActiveModel
-};
 use crate::AppState;
-use crate::utils::{hash, jwt::{self, JwtConfig}, conversions};
+use crate::models::user::{ 
+    AuthResponse,
+    Column as UserColumn, 
+    Entity as UserEntity, 
+    UserDTO, ActiveModel, 
+    UserResponse
+};
+use crate::utils::{hash, 
+    jwt::{self, JwtConfig}, 
+    conversions
+};
+use crate::middlewares::auth::AuthenticatedUser;
+
 
 #[derive(Debug, Deserialize)]
 pub struct LoginDto {
@@ -44,7 +53,7 @@ pub async fn login(
         .then_some(())
         .ok_or((StatusCode::UNAUTHORIZED, "Credenciales inválidas".to_string()))?;
 
-    // Generar token JWT
+    // Generar token JWTEntity
     let token = jwt::generate_token(user.id, &jwt_config)
         .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
     
@@ -96,4 +105,19 @@ pub async fn register(
         user: conversions::to_response(&user),
         token 
     }))
+}
+
+pub async fn token_verify(
+    State(state): State<AppState>,
+    user: AuthenticatedUser
+) -> Result<Json<UserResponse>, (StatusCode, String)> {
+    let db = &state.db;
+
+    let user_model = UserEntity::find_by_id(user.0)
+        .one(db)
+        .await
+        .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?
+        .ok_or((StatusCode::NOT_FOUND, "Usuario no encontrado".to_string()))?;
+
+    Ok(Json(conversions::to_response(&user_model)))
 }

@@ -1,13 +1,13 @@
 //! Run with
 //! systemfd --no-pid -s http::3000 -- cargo watch -x run
 
-use axum::{Router};
+use axum::{Router, http::{header, Method}};
 use dotenvy::dotenv;
 use listenfd::ListenFd;
 use sea_orm::{Database, DatabaseConnection};
 use std::env;
 use tokio::net::TcpListener;
-use tower_http::cors::{CorsLayer};
+use tower_http::cors::{CorsLayer, Any};
 
 use crate::utils::jwt::{JwtConfig};
 
@@ -45,7 +45,13 @@ async fn main() {
         jwt_config: jwt_config.clone(),
     };
 
-    let cors = CorsLayer::permissive();
+    let cors = CorsLayer::new()
+        .allow_origin(Any)
+        .allow_methods([Method::GET, Method::POST, Method::OPTIONS])
+        .allow_headers([
+        header::AUTHORIZATION,
+        header::CONTENT_TYPE,
+        ]);
 
     let app = Router::new()
         .merge(routes::user_routes::user_routes(jwt_config.clone()))

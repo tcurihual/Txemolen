@@ -5,11 +5,13 @@ import { BsPersonCircle } from "react-icons/bs"
 import { IoIosArrowDown } from "react-icons/io"
 import { useModal } from "../contexts/ModalContext"
 import { useLocation } from "react-router-dom"
+import { useAuth } from "../contexts/AuthContext"
 
 const Header: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [dropdown, setDropdown] = useState(false)
     const [title, setTitle] = useState("")
 
+    const { User } = useAuth()
     const { openModal } = useModal()
 
     const location = useLocation()
@@ -60,7 +62,7 @@ const Header: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                     <div className="w-[50px] h-[50px] rounded-full">
                         <BsPersonCircle className="w-full h-full" />
                     </div>
-                    <p className="font-medium text-[20px]">Juan Perez</p>
+                    <p className="font-medium text-[20px]">{User?.name}</p>
                     <motion.div
                         className="w-[20px] h-[20px]"
                         animate={{ rotate: dropdown ? 180 : 0 }}

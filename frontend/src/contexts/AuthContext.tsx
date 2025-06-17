@@ -7,11 +7,17 @@ import React, {
 } from "react"
 import Cookies from "js-cookie"
 
-import { SERVER_URL, type LoginData, type UserDTO } from "../utils/types"
+import {
+    SERVER_URL,
+    type LoginData,
+    type UserDTO,
+    type UserResponse,
+} from "../utils/types"
 import { useLoading } from "./LoadingContext"
 
 type AuthContextType = {
-    isAuthenticated: boolean
+    isAuthenticated: boolean | null
+    User: UserResponse | undefined
     checkAuthentication: () => Promise<boolean>
     login: (login_data: LoginData) => Promise<void>
     register: (user_data: UserDTO) => void
@@ -24,6 +30,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     children,
 }) => {
     const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
+    const [User, setUser] = useState<UserResponse | undefined>(undefined)
     const { withLoading } = useLoading()
 
     const verifyToken = async (token: string) => {
@@ -34,8 +41,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
                 },
-            }).then((response) => {
+            }).then(async (response) => {
                 if (!response.ok) return false
+                const data = await response.json()
+                setUser(data)
                 return true
             })
         )
@@ -64,16 +73,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
             if (isActive && !isValid) {
                 Cookies.remove("token")
             }
-            console.log(SERVER_URL)
         })
         return () => {
             isActive = false
         }
     }, [])
-
-    if (isAuthenticated === null) {
-        return null
-    }
 
     const login = async (login_data: LoginData) => {
         return withLoading(
@@ -120,8 +124,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     return (
         <AuthContext.Provider
             value={{
-                checkAuthentication,
                 isAuthenticated,
+                User,
+                checkAuthentication,
                 login,
                 register,
                 logout,

@@ -1,3 +1,6 @@
+import { z } from "zod/v4"
+import type { loginSchema, registerSchema } from "./validations"
+
 export const SERVER_URL = import.meta.env.VITE_SERVER_URL as string
 
 export type MealType = "Desayuno" | "Almuerzo" | "Cena" | "Snack"
@@ -57,10 +60,8 @@ export interface DailyGoal {
     fat: number
 }
 
-export type LoginData = {
-    email: User["email"]
-    password: User["password"]
-}
+export type LoginData = z.infer<typeof loginSchema>
+export type RegisterData = z.infer<typeof registerSchema>
 
 export interface CreateFoodPayload extends Omit<Food, "code"> {}
 export interface CreateUserPayload extends Omit<User, "id" | "daily_goal_id"> {
