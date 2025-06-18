@@ -8,7 +8,7 @@ use sea_orm::{
     ActiveModelTrait, EntityTrait, Set
 };
 
-use crate::models::user::{ActiveModel, Entity, Model, UserDTO, UserResponse};
+use crate::models::user::{ActiveModel, Entity, Model, UserDTO, UserResponse, Gender};
 use crate::AppState;
 use crate::utils::{hash, conversions};
 
@@ -42,11 +42,17 @@ pub async fn create(
     let hashed_password = hash::hash_password(&user_data.password)
         .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
 
+    let gender_enum = user_data.gender.ok_or((
+        StatusCode::BAD_REQUEST,
+        "Gender is required".into(),
+    ))?;
+
+
     let user = ActiveModel {
         name: Set(user_data.name),
         email: Set(user_data.email),
         password: Set(hashed_password),
-        gender: Set(user_data.gender),
+        gender: Set(Some(gender_enum)),
         age: Set(user_data.age),
         weight: Set(user_data.weight),
         height: Set(user_data.height),

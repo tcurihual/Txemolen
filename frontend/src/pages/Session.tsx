@@ -4,7 +4,7 @@ import { useAuth } from "../contexts/AuthContext"
 import { motion, AnimatePresence } from "motion/react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { loginSchema, registerSchema } from "../utils/validations"
+import { loginFormSchema, registerFormSchema } from "../utils/validations"
 import FormInput from "../components/inputForm"
 
 const formVariants = {
@@ -19,11 +19,11 @@ const Session: React.FC = () => {
     const [isLogin, setIsLogin] = React.useState(true)
 
     const loginForm = useForm({
-        resolver: zodResolver(loginSchema),
+        resolver: zodResolver(loginFormSchema),
     })
 
     const registerForm = useForm({
-        resolver: zodResolver(registerSchema),
+        resolver: zodResolver(registerFormSchema),
     })
 
     if (redirect) {
@@ -121,38 +121,15 @@ const Session: React.FC = () => {
                                 error={registerForm.formState.errors.password}
                             />
                             <FormInput
-                                label="Género"
-                                name="gender"
-                                placeholder="Ingrese su género"
-                                register={registerForm.register("gender")}
-                                error={registerForm.formState.errors.gender}
-                            />
-                            <FormInput
-                                label="Edad"
-                                name="age"
-                                placeholder="Ingrese su edad"
-                                register={registerForm.register("age", {
-                                    valueAsNumber: true,
-                                })}
-                                error={registerForm.formState.errors.age}
-                            />
-                            <FormInput
-                                label="Peso (Kg)"
-                                name="weight"
-                                placeholder="Ingrese su peso en Kg"
-                                register={registerForm.register("weight", {
-                                    valueAsNumber: true,
-                                })}
-                                error={registerForm.formState.errors.weight}
-                            />
-                            <FormInput
-                                label="Altura (cm)"
-                                name="height"
-                                placeholder="Ingrese su altura en cm"
-                                register={registerForm.register("height", {
-                                    valueAsNumber: true,
-                                })}
-                                error={registerForm.formState.errors.height}
+                                label="Verificar Contraseña"
+                                name="Password"
+                                placeholder="Repita su contraseña"
+                                register={registerForm.register(
+                                    "verifyPassword"
+                                )}
+                                error={
+                                    registerForm.formState.errors.verifyPassword
+                                }
                             />
                             <button
                                 type="submit"

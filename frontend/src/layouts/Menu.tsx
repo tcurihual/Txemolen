@@ -9,8 +9,10 @@ import { PiBowlFoodFill } from "react-icons/pi"
 import { TbLogout2 } from "react-icons/tb"
 
 import { MenuCard } from "../components/MenuCard"
+import { useAuth } from "../contexts/AuthContext"
 
 const Menu: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const { logout } = useAuth()
     const navigate = useNavigate()
     const handleCardClick = (route: string) => {
         navigate(route)
@@ -63,7 +65,10 @@ const Menu: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                     <div className="w-[30px] h-[30px] ">
                         <TbLogout2 className="w-full h-full" />
                     </div>
-                    <p className="font-medium text-[20px] text-black">
+                    <p
+                        className="font-medium text-[20px] text-black"
+                        onClick={logout}
+                    >
                         Log Out
                     </p>
                 </div>

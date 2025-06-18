@@ -10,7 +10,7 @@ import Cookies from "js-cookie"
 import {
     SERVER_URL,
     type LoginFormData as LoginData,
-    type UserDTO,
+    type RegisterFormData,
     type UserResponse,
 } from "../utils/types"
 import { useLoading } from "./LoadingContext"
@@ -20,7 +20,7 @@ type AuthContextType = {
     User: UserResponse | undefined
     checkAuthentication: () => Promise<boolean>
     login: (login_data: LoginData) => Promise<void>
-    register: (user_data: UserDTO) => Promise<void>
+    register: (user_data: RegisterFormData) => Promise<void>
     logout: () => void
 }
 
@@ -97,7 +97,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
         )
     }
 
-    const register = async (user_data: UserDTO) => {
+    const register = async (user_data: RegisterFormData) => {
         return withLoading(
             fetch(`${SERVER_URL}/auth/register`, {
                 method: "POST",

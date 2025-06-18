@@ -9,10 +9,10 @@ pub struct Model {
     pub name: String,
     pub email: String,
     pub password: String,
-    pub gender: String,
-    pub age: i32,
-    pub weight: f32,
-    pub height: f32,
+    pub gender: Option<Gender>,
+    pub age: Option<i32>,
+    pub weight: Option<f32>,
+    pub height: Option<f32>,
     pub fat_percentage: Option<f32>,
     pub daily_goal_id: Option<i32>, 
 }
@@ -42,12 +42,12 @@ pub struct UserDTO {
     pub name: String,
     pub email: String,
     pub password: String,
-    pub gender: String,
-    pub age: i32,
-    pub weight: f32,
-    pub height: f32,
+    pub gender: Option<Gender>,
+    pub age: Option<i32>,
+    pub weight: Option<f32>,
+    pub height: Option<f32>,
     pub fat_percentage: Option<f32>,
-    pub daily_goal_id: Option<i32>,  
+    pub daily_goal_id: Option<i32>, 
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -55,16 +55,36 @@ pub struct UserResponse {
     pub id: i32,
     pub name: String,
     pub email: String,
-    pub gender: String,
-    pub age: i32,
-    pub weight: f32,
-    pub height: f32,
+    pub gender: Option<Gender>,
+    pub age: Option<i32>,
+    pub weight: Option<f32>,
+    pub height: Option<f32>,
     pub fat_percentage: Option<f32>,
     pub daily_goal_id: Option<i32>, 
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct UserRegister {
+    pub name: String,
+    pub email: String,
+    pub password: String,
 }
 
 #[derive(Serialize)]
 pub struct AuthResponse {
     pub user: UserResponse,
     pub token: String,
+}
+
+#[derive(Debug, Clone, PartialEq, EnumIter, DeriveActiveEnum, Serialize, Deserialize)]
+#[sea_orm(
+    rs_type = "String",
+    db_type = "Enum",
+    enum_name = "gender_type"
+)]
+pub enum Gender {
+    #[sea_orm(string_value = "Male")]
+    Male, 
+    #[sea_orm(string_value = "Female")]
+    Female, 
 }

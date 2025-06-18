@@ -15,11 +15,7 @@ use sea_orm::{
 
 use crate::AppState;
 use crate::models::user::{ 
-    AuthResponse,
-    Column as UserColumn, 
-    Entity as UserEntity, 
-    UserDTO, ActiveModel, 
-    UserResponse
+    ActiveModel, AuthResponse, Column as UserColumn, Entity as UserEntity, UserDTO, UserRegister, UserResponse
 };
 use crate::utils::{hash, 
     jwt::{self, JwtConfig}, 
@@ -66,9 +62,12 @@ pub async fn login(
 pub async fn register(
     State(state): State<AppState>,
     Extension(jwt_config): Extension<JwtConfig>,
-    Json(user_data): Json<UserDTO>,
-    ) -> Result<Json<AuthResponse>, (StatusCode, String)> {
-// verificar existencia de usuario  
+    Json(user_data): Json<UserRegister>,
+) -> Result<Json<AuthResponse>, (StatusCode, String)> {
+    // Mostrar el body de la request en consola (debug)
+    println!("register body: {:?}", user_data);
+
+    // verificar existencia de usuario  
     let existing_user = UserEntity::find()
         .filter(UserColumn::Email.eq(user_data.email.clone()))
         .one(&state.db)
@@ -86,12 +85,6 @@ pub async fn register(
         name: Set(user_data.name),
         email: Set(user_data.email),
         password: Set(hashed_password),
-        gender: Set(user_data.gender),
-        age: Set(user_data.age),
-        weight: Set(user_data.weight),
-        height: Set(user_data.height),
-        fat_percentage: Set(user_data.fat_percentage),
-        daily_goal_id: Set(user_data.daily_goal_id),
         ..Default::default()
     }
     .insert(&state.db)
@@ -99,7 +92,7 @@ pub async fn register(
     .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
 
     let token = jwt::generate_token(user.id, &jwt_config)
-    .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
+        .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
 
     Ok(Json(AuthResponse {
         user: conversions::to_response(&user),

@@ -1,5 +1,6 @@
 use sea_orm_migration::prelude::*;
 use sea_orm::Statement;
+use sea_orm_migration::prelude::extension::postgres::Type;
 
 #[derive(DeriveIden)]
 enum Food {
@@ -111,7 +112,15 @@ impl MigrationTrait for Migration {
             )
             .await?;
 
-        // Create User table
+        manager
+            .create_type(
+                Type::create()
+                    .as_enum(Alias::new("gender_type"))
+                    .values([Alias::new("Male"), Alias::new("Female")])
+                    .to_owned(),
+            )
+            .await?;
+
         manager
             .create_table(
                 Table::create()
@@ -126,10 +135,13 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(User::Name).string().not_null())
                     .col(ColumnDef::new(User::Email).string().not_null())
                     .col(ColumnDef::new(User::Password).string().not_null())
-                    .col(ColumnDef::new(User::Gender).string().not_null())
-                    .col(ColumnDef::new(User::Age).integer().not_null())
-                    .col(ColumnDef::new(User::Weight).float().not_null())
-                    .col(ColumnDef::new(User::Height).float().not_null())
+                    .col(
+                        ColumnDef::new(User::Gender)
+                            .custom("gender_type")
+                    )
+                    .col(ColumnDef::new(User::Age).integer())
+                    .col(ColumnDef::new(User::Weight).float())
+                    .col(ColumnDef::new(User::Height).float())
                     .col(ColumnDef::new(User::FatPercentage).float())
                     .col(ColumnDef::new(User::DailyGoalId).integer())
                     .foreign_key(
@@ -141,7 +153,6 @@ impl MigrationTrait for Migration {
                     .to_owned(),
             )
             .await?;
-
         // Create Day table
         manager
             .create_table(
@@ -176,11 +187,12 @@ impl MigrationTrait for Migration {
 
         // Create MealType enum
         manager
-            .get_connection()
-            .execute(Statement::from_string(
-                manager.get_database_backend(),
-                "CREATE TYPE meal_type AS ENUM ('Breakfast', 'MorningSnack', 'Lunch', 'EveningSnack', 'Dinner' )".to_string(),
-            ))
+            .create_type(
+                Type::create()
+                .as_enum(Alias::new("meal_type_name"))
+                .values([Alias::new("Breakfast"), Alias::new("MorningSnack"), Alias::new("Lunch"), Alias::new("EveningSnack"), Alias::new("Dinner")])
+                .to_owned(),
+            )
             .await?;
 
         // Create Meal table
@@ -195,7 +207,11 @@ impl MigrationTrait for Migration {
                             .auto_increment()
                             .primary_key(),
                     )
-                    .col(ColumnDef::new(Meal::MealType).string_len(20).not_null())
+                    .col(
+                        ColumnDef::new(Meal::MealType)
+                            .custom("meal_type_name") 
+                            .not_null(),
+                    )
                     .col(ColumnDef::new(Meal::DayId).integer().not_null())
                     .foreign_key(
                         ForeignKey::create()

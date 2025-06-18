@@ -32,6 +32,7 @@ const FormInput: React.FC<FormInputProps> = ({
                 id={name}
                 className={`w-full px-3 py-2 border ${borderErr} rounded focus:outline-none focus:ring focus:ring-blue-200`}
                 placeholder={placeholder}
+                type={name}
                 {...register}
             />
         </div>
