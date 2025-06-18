@@ -6,7 +6,7 @@ import Biometrics from "./pages/Biometrics"
 import Calendar from "./pages/Calendar"
 import Recipes from "./pages/Recipes"
 import { ProtectedRoute } from "./components/ProtectedRoute"
-import Login from "./pages/Login"
+import Session from "./pages/Session"
 
 const WebRouter: React.FC = () => {
     return (
@@ -43,7 +43,7 @@ const WebRouter: React.FC = () => {
                     </ProtectedRoute>
                 }
             />
-            <Route path="/iniciar-sesion" element={<Login />} />
+            <Route path="/sesion" element={<Session />} />
         </Routes>
     )
 }

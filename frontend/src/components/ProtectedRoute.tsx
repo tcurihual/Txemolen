@@ -26,9 +26,7 @@ export const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
     }
 
     if (isAuth === false) {
-        return (
-            <Navigate to="/iniciar-sesion" state={{ from: location }} replace />
-        )
+        return <Navigate to="/sesion" state={{ from: location }} replace />
     }
 
     return <>{children}</>

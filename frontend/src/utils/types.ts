@@ -60,8 +60,8 @@ export interface DailyGoal {
     fat: number
 }
 
-export type LoginData = z.infer<typeof loginSchema>
-export type RegisterData = z.infer<typeof registerSchema>
+export type LoginFormData = z.infer<typeof loginSchema>
+export type RegisterFormData = z.infer<typeof registerSchema>
 
 export interface CreateFoodPayload extends Omit<Food, "code"> {}
 export interface CreateUserPayload extends Omit<User, "id" | "daily_goal_id"> {

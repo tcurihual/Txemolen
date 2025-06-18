@@ -9,7 +9,7 @@ import Cookies from "js-cookie"
 
 import {
     SERVER_URL,
-    type LoginData,
+    type LoginFormData as LoginData,
     type UserDTO,
     type UserResponse,
 } from "../utils/types"
@@ -20,7 +20,7 @@ type AuthContextType = {
     User: UserResponse | undefined
     checkAuthentication: () => Promise<boolean>
     login: (login_data: LoginData) => Promise<void>
-    register: (user_data: UserDTO) => void
+    register: (user_data: UserDTO) => Promise<void>
     logout: () => void
 }
 

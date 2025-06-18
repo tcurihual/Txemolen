@@ -10,6 +10,7 @@
         "format": "prettier --write ."
     },
     "dependencies": {
+        "@hookform/resolvers": "^5.1.1",
         "@tailwindcss/vite": "^4.1.8",
         "@types/node": "^22.15.30",
         "js-cookie": "^3.0.5",
