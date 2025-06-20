@@ -8,7 +8,7 @@ use sea_orm::{
     ActiveModelTrait, EntityTrait, Set
 };
 
-use crate::models::user::{ActiveModel, Entity, Model, UserDTO, UserResponse, Gender};
+use crate::models::user::{ActiveModel, Entity, Model, UserDTO, UserResponse};
 use crate::AppState;
 use crate::utils::{hash, conversions};
 

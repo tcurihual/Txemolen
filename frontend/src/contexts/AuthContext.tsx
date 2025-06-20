@@ -9,6 +9,7 @@ import Cookies from "js-cookie"
 
 import {
     SERVER_URL,
+    type AuthError,
     type LoginFormData as LoginData,
     type RegisterFormData,
     type UserResponse,
@@ -18,6 +19,7 @@ import { useLoading } from "./LoadingContext"
 type AuthContextType = {
     isAuthenticated: boolean | null
     User: UserResponse | undefined
+    AuthError: AuthError | undefined
     checkAuthentication: () => Promise<boolean>
     login: (login_data: LoginData) => Promise<void>
     register: (user_data: RegisterFormData) => Promise<void>
@@ -31,6 +33,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
     const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
     const [User, setUser] = useState<UserResponse | undefined>(undefined)
+    const [AuthError, setError] = useState<AuthError | undefined>(undefined)
     const { withLoading } = useLoading()
 
     const verifyToken = async (token: string) => {
@@ -79,6 +82,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
         }
     }, [])
 
+    useEffect(() => {
+        if (isAuthenticated) setError(undefined)
+    }, [isAuthenticated])
+
     const login = async (login_data: LoginData) => {
         return withLoading(
             fetch(`${SERVER_URL}/auth/login`, {
@@ -86,7 +93,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(login_data),
             }).then(async (response) => {
-                if (!response.ok) throw new Error("Error al iniciar sesión")
+                if (!response.ok) {
+                    const AuthError: AuthError = {
+                        instance: "Login",
+                        message: await response.text(),
+                    }
+                    setError(AuthError)
+                    throw new Error("Error al iniciar sesion")
+                }
                 const data = await response.json()
                 Cookies.set("token", data.token, {
                     secure: true,
@@ -104,7 +118,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(user_data),
             }).then(async (response) => {
-                if (!response.ok) throw new Error("Error al registrarse")
+                if (!response.ok) {
+                    const AuthError: AuthError = {
+                        instance: "Register",
+                        message: await response.text(),
+                    }
+                    setError(AuthError)
+                    throw new Error("Error al registrarse")
+                }
                 const data = await response.json()
                 Cookies.set("token", data.token, {
                     secure: true,
@@ -126,6 +147,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
             value={{
                 isAuthenticated,
                 User,
+                AuthError,
                 checkAuthentication,
                 login,
                 register,

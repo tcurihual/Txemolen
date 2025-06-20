@@ -15,7 +15,7 @@ use sea_orm::{
 
 use crate::AppState;
 use crate::models::user::{ 
-    ActiveModel, AuthResponse, Column as UserColumn, Entity as UserEntity, UserDTO, UserRegister, UserResponse
+    ActiveModel, AuthResponse, Column as UserColumn, Entity as UserEntity, UserRegister, UserResponse
 };
 use crate::utils::{hash, 
     jwt::{self, JwtConfig}, 
@@ -41,13 +41,13 @@ pub async fn login(
         .one(&state.db)
         .await
         .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?
-        .ok_or((StatusCode::UNAUTHORIZED, "Credenciales inválidas".to_string()))?;
+        .ok_or((StatusCode::UNAUTHORIZED, "Usuario o contraseña incorrectos".to_string()))?;
 
     // Verificar contraseña
     hash::verify_password(&login_data.password, &user.password)
         .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?
         .then_some(())
-        .ok_or((StatusCode::UNAUTHORIZED, "Credenciales inválidas".to_string()))?;
+        .ok_or((StatusCode::UNAUTHORIZED, "Usuario o contraseña incorrectos".to_string()))?;
 
     // Generar token JWTEntity
     let token = jwt::generate_token(user.id, &jwt_config)
@@ -64,9 +64,6 @@ pub async fn register(
     Extension(jwt_config): Extension<JwtConfig>,
     Json(user_data): Json<UserRegister>,
 ) -> Result<Json<AuthResponse>, (StatusCode, String)> {
-    // Mostrar el body de la request en consola (debug)
-    println!("register body: {:?}", user_data);
-
     // verificar existencia de usuario  
     let existing_user = UserEntity::find()
         .filter(UserColumn::Email.eq(user_data.email.clone()))
@@ -75,7 +72,7 @@ pub async fn register(
         .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
 
     if existing_user.is_some() {
-        return Err((StatusCode::CONFLICT, "El usuario ya existe".to_string()));
+        return Err((StatusCode::CONFLICT, "Este correo ya esta registrado".to_string()));
     }
     // Hashear la contraseña
     let hashed_password = hash::hash_password(&user_data.password)

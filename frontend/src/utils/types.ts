@@ -60,6 +60,13 @@ export interface DailyGoal {
     fat: number
 }
 
+export type AuthInstance = "Login" | "Register"
+
+export interface AuthError {
+    instance: AuthInstance
+    message: string | undefined
+}
+
 export type LoginFormData = z.infer<typeof loginFormSchema>
 export type RegisterFormData = z.infer<typeof registerFormSchema>
 
