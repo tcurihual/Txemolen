@@ -18,14 +18,17 @@ pub struct Model {
     enum_name = "meal_type"
 )]
 pub enum MealType {
-    #[sea_orm(string_value = "Desayuno")]
+    #[sea_orm(string_value = "Breakfast")]
     Breakfast,
-    #[sea_orm(string_value = "Almuerzo")]
+    #[sea_orm(string_value = "MorningSnack")]
+    MorningSnack,
+    #[sea_orm(string_value = "Lunch")]
     Lunch,
-    #[sea_orm(string_value = "Cena")]
+    #[sea_orm(string_value = "Dinner")]
     Dinner,
-    #[sea_orm(string_value = "Snack")]
-    Snack,
+    #[sea_orm(string_value = "EveningSnack")]
+    EveningSnack,
+    
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

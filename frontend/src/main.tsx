@@ -9,18 +9,21 @@ import Header from "./layouts/Header.tsx"
 import WebRouter from "./router.tsx"
 import { ModalProvider } from "./contexts/ModalContext.tsx"
 import { LoadingProvider } from "./contexts/LoadingContext.tsx"
+import { AuthProvider } from "./contexts/AuthContext.tsx"
 
 createRoot(document.getElementById("root")!).render(
     <StrictMode>
         <BrowserRouter>
             <LoadingProvider>
-                <ModalProvider>
-                    <Menu>
-                        <Header>
-                            <WebRouter />
-                        </Header>
-                    </Menu>
-                </ModalProvider>
+                <AuthProvider>
+                    <ModalProvider>
+                        <Menu>
+                            <Header>
+                                <WebRouter />
+                            </Header>
+                        </Menu>
+                    </ModalProvider>
+                </AuthProvider>
             </LoadingProvider>
         </BrowserRouter>
     </StrictMode>

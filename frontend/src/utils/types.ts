@@ -1,3 +1,8 @@
+import { z } from "zod/v4"
+import type { loginFormSchema, registerFormSchema } from "./validations"
+
+export const SERVER_URL = import.meta.env.VITE_SERVER_URL as string
+
 export type MealType = "Desayuno" | "Almuerzo" | "Cena" | "Snack"
 
 export interface Food {
@@ -22,6 +27,10 @@ export interface User {
     fat_percentage?: number
     daily_goal_id: number
 }
+
+export interface UserDTO extends Omit<User, "id" | "daily_goal_id"> {}
+
+export interface UserResponse extends Omit<User, "password"> {}
 
 export interface Meal {
     id: number
@@ -50,6 +59,16 @@ export interface DailyGoal {
     carbos: number
     fat: number
 }
+
+export type AuthInstance = "Login" | "Register"
+
+export interface AuthError {
+    instance: AuthInstance
+    message: string | undefined
+}
+
+export type LoginFormData = z.infer<typeof loginFormSchema>
+export type RegisterFormData = z.infer<typeof registerFormSchema>
 
 export interface CreateFoodPayload extends Omit<Food, "code"> {}
 export interface CreateUserPayload extends Omit<User, "id" | "daily_goal_id"> {
