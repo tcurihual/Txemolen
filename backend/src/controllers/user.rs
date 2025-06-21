@@ -5,10 +5,10 @@ use axum::{
 };
 
 use sea_orm::{
-    ActiveModelTrait, EntityTrait, Set
+    ActiveModelTrait, ActiveValue::NotSet, EntityTrait, Set
 };
 
-use crate::models::user::{ActiveModel, Entity, Model, UserDTO, UserResponse};
+use crate::models::user::{ActiveModel, Entity, UserDTO, UserResponse};
 use crate::AppState;
 use crate::utils::{hash, conversions};
 
@@ -70,8 +70,8 @@ pub async fn create(
 pub async fn update(
     State(state): State<AppState>,
     Path(id): Path<i32>,
-    Json(user_data): Json<Model>,
-) -> Result<Json<Model>, (StatusCode, String)> {
+    Json(user_data): Json<UserResponse>,
+) -> Result<Json<UserResponse>, (StatusCode, String)> {
     let user = Entity::find_by_id(id)
         .one(&state.db)
         .await
@@ -82,7 +82,7 @@ pub async fn update(
         id: Set(user.id),
         name: Set(user_data.name),
         email: Set(user_data.email),
-        password: Set(user_data.password),
+        password: NotSet,
         gender: Set(user_data.gender),
         age: Set(user_data.age),
         weight: Set(user_data.weight),
@@ -94,7 +94,7 @@ pub async fn update(
     .await
     .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
 
-    Ok(Json(updated_user))
+    Ok(Json(conversions::to_response(&updated_user)))
 }
 
 pub async fn delete(
