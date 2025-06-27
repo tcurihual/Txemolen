@@ -2,7 +2,9 @@ import { z } from "zod/v4"
 
 export const registerFormSchema = z
     .object({
-        name: z.string("Debes ingresar un nombre"),
+        name: z
+            .string("Debes ingresar un nombre")
+            .min(1, "Debes ingresar un nombre"),
         email: z.email("Debes ingresar un correo"),
         password: z
             .string("La contraseña es obligatoria")
@@ -21,5 +23,5 @@ export const registerFormSchema = z
 
 export const loginFormSchema = z.object({
     email: z.email("Debes ingresar un correo"),
-    password: z.string(),
+    password: z.string("Debes ingresar la contraseña"),
 })
