@@ -25,3 +25,11 @@ export const loginFormSchema = z.object({
     email: z.email("Debes ingresar un correo"),
     password: z.string("Debes ingresar la contraseña"),
 })
+
+export const biometricsFormSchema = z.object({
+    gender: z.enum(["Female", "Male"]),
+    age: z.number("Debe ingresar una edad"),
+    weight: z.number("Debe ingresar un peso"),
+    height: z.number("Debes ingresar una altura"),
+    percenfat_percentage: z.number("Debes ingresar un porcentaje"),
+})

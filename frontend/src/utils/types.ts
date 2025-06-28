@@ -5,6 +5,8 @@ export const SERVER_URL = import.meta.env.VITE_SERVER_URL as string
 
 export type MealType = "Desayuno" | "Almuerzo" | "Cena" | "Snack"
 
+export type GenderType = "Male" | "Female" | false
+
 export interface Food {
     code: string
     name: string
@@ -20,7 +22,7 @@ export interface User {
     name: string
     email: string
     password: string
-    gender: string
+    gender: GenderType
     age: number
     weight: number
     height: number

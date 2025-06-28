@@ -40,10 +40,10 @@ export const FormInput: React.FC<FormInputProps> = ({
     )
 }
 
-interface BiometricsInputProps
-    extends React.InputHTMLAttributes<HTMLInputElement> {
+interface BiometricsInputProps {
     Icon: IconType
     color?: string
+    name: string
     rightContent?: boolean
     rightText?: string
 }
@@ -51,18 +51,22 @@ interface BiometricsInputProps
 export const BiometricsInput: React.FC<BiometricsInputProps> = ({
     Icon,
     color = "#000000",
+    name,
     rightText,
 }) => (
-    <div className="flex items-center justify-center rounded-3xl w-[35%] h-[10%] border-[2.5px] border-gray-300 ">
-        <div className="flex flex-1 h-full items-center justify-center border-r-[2.5px] border-gray-300 ">
-            <Icon className="w-12 h-12" style={{ color }} />
-        </div>
-        <input className="flex-2 w-full h-full focus:outline-none focus:ring-0" />
-        {rightText && (
-            <div className="flex flex-1 h-full items-center justify-center border-l-[2.5px] border-gray-300">
-                <p className="text-2xl">{rightText}</p>
+    <div className="flex flex-col justify-between w-[100%] h-[13%]">
+        <p className="text-xl pb-[2.5%]">{name}</p>
+        <div className="flex items-center justify-center rounded-3xl w-full h-full border-[2.5px] border-gray-300 ">
+            <div className="flex flex-1 h-full items-center justify-center border-r-[2.5px] border-gray-300 ">
+                <Icon className="w-12 h-12" style={{ color }} />
             </div>
-        )}
+            <input className="flex-2 w-full h-full pl-8 text-2xl focus:outline-none focus:ring-0" />
+            {rightText && (
+                <div className="flex flex-1 h-full items-center justify-center border-l-[2.5px] border-gray-300">
+                    <p className="text-2xl">{rightText}</p>
+                </div>
+            )}
+        </div>
     </div>
 )
 
