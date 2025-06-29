@@ -1,5 +1,10 @@
 import React from "react"
-import { type FieldError, type UseFormRegisterReturn } from "react-hook-form"
+import {
+    type FieldError,
+    type UseFormRegisterReturn,
+    type Merge,
+    type FieldErrorsImpl,
+} from "react-hook-form"
 import type { IconType } from "react-icons/lib"
 
 interface FormInputProps {
@@ -43,24 +48,40 @@ export const FormInput: React.FC<FormInputProps> = ({
 interface BiometricsInputProps {
     Icon: IconType
     color?: string
-    name: string
+    labelName: string
     rightContent?: boolean
     rightText?: string
+    error?: FieldError | Merge<FieldError, FieldErrorsImpl<any>> | undefined
 }
 
 export const BiometricsInput: React.FC<BiometricsInputProps> = ({
     Icon,
     color = "#000000",
-    name,
+    labelName,
     rightText,
+    error,
+    ...props
 }) => (
     <div className="flex flex-col justify-between w-[100%] h-[13%]">
-        <p className="text-xl pb-[2.5%]">{name}</p>
+        <div className="flex text-center gap-5 items-center pb-[2.5px]">
+            <p className="text-xl">{labelName}</p>
+            {error &&
+                "message" in error &&
+                typeof error.message === "string" && (
+                    <span className="text-red-500 text-sm mt-1">
+                        {error.message}
+                    </span>
+                )}
+        </div>
+
         <div className="flex items-center justify-center rounded-3xl w-full h-full border-[2.5px] border-gray-300 ">
             <div className="flex flex-1 h-full items-center justify-center border-r-[2.5px] border-gray-300 ">
                 <Icon className="w-12 h-12" style={{ color }} />
             </div>
-            <input className="flex-2 w-full h-full pl-8 text-2xl focus:outline-none focus:ring-0" />
+            <input
+                className={` flex-2 w-full h-full pl-8 text-2xl focus:outline-none focus:ring-0 ${error ? "border-red-500" : ""}`}
+                {...props}
+            />
             {rightText && (
                 <div className="flex flex-1 h-full items-center justify-center border-l-[2.5px] border-gray-300">
                     <p className="text-2xl">{rightText}</p>

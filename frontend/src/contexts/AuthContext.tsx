@@ -12,6 +12,7 @@ import {
     type AuthError,
     type LoginFormData as LoginData,
     type RegisterFormData,
+    type User,
     type UserResponse,
 } from "../utils/types"
 import { useLoading } from "./LoadingContext"
@@ -20,6 +21,7 @@ type AuthContextType = {
     isAuthenticated: boolean | null
     User: UserResponse | undefined
     AuthError: AuthError | undefined
+    HasBio: boolean | undefined
     checkAuthentication: () => Promise<boolean>
     login: (login_data: LoginData) => Promise<void>
     register: (user_data: RegisterFormData) => Promise<void>
@@ -34,6 +36,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
     const [User, setUser] = useState<UserResponse | undefined>(undefined)
     const [AuthError, setError] = useState<AuthError | undefined>(undefined)
+    const [HasBio, setHasBio] = useState<boolean | undefined>(undefined)
     const { withLoading } = useLoading()
 
     const verifyToken = async (token: string) => {
@@ -46,8 +49,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
                 },
             }).then(async (response) => {
                 if (!response.ok) return false
-                const data = await response.json()
+                const data: User = await response.json()
                 setUser(data)
+                setHasBio(!!data.daily_goal_id)
                 return true
             })
         )
@@ -148,6 +152,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
                 isAuthenticated,
                 User,
                 AuthError,
+                HasBio,
                 checkAuthentication,
                 login,
                 register,

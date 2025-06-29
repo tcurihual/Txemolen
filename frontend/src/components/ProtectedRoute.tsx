@@ -6,7 +6,7 @@ import { useLoading } from "../contexts/LoadingContext"
 export const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
     children,
 }) => {
-    const { checkAuthentication } = useAuth()
+    const { checkAuthentication, HasBio } = useAuth()
     const { withLoading, setLoading } = useLoading()
     const location = useLocation()
 

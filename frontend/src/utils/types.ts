@@ -1,5 +1,9 @@
 import { z } from "zod/v4"
-import type { loginFormSchema, registerFormSchema } from "./validations"
+import type {
+    biometricsFormSchema,
+    loginFormSchema,
+    registerFormSchema,
+} from "./validations"
 
 export const SERVER_URL = import.meta.env.VITE_SERVER_URL as string
 
@@ -71,6 +75,7 @@ export interface AuthError {
 
 export type LoginFormData = z.infer<typeof loginFormSchema>
 export type RegisterFormData = z.infer<typeof registerFormSchema>
+export type BiometricsFormData = z.infer<typeof biometricsFormSchema>
 
 export interface CreateFoodPayload extends Omit<Food, "code"> {}
 export interface CreateUserPayload extends Omit<User, "id" | "daily_goal_id"> {
