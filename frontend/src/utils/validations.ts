@@ -1,5 +1,13 @@
 import { z } from "zod/v4"
 
+export const activityLevelSchema = z.enum([
+    "Sedentary",
+    "Light",
+    "Moderate",
+    "Heavy",
+    "Intense",
+])
+
 export const registerFormSchema = z
     .object({
         name: z
@@ -42,6 +50,9 @@ export const biometricsFormSchema = z.object({
         .max(210, "Altura Máxima: 210 centimetros"),
     fat_percentage: z
         .number("Debe ingresar un porcentaje")
-        .min(0, "Mínimo 0%")
-        .max(80, "Máximo 80%"),
+        .min(5, "El mínimo es 0%")
+        .max(80, "El máximo 80%")
+        .optional()
+        .nullable(),
+    activity_level: activityLevelSchema,
 })

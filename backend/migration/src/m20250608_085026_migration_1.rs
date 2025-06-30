@@ -26,6 +26,7 @@ enum User {
     Weight,
     Height,
     FatPercentage,
+    ActivityLevel, 
     DailyGoalId,
 }
 
@@ -71,7 +72,6 @@ pub struct Migration;
 #[async_trait::async_trait]
 impl MigrationTrait for Migration {
     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
-        // Create Food table
         manager
             .create_table(
                 Table::create()
@@ -92,7 +92,6 @@ impl MigrationTrait for Migration {
             )
             .await?;
 
-        // Create DailyGoal table
         manager
             .create_table(
                 Table::create()
@@ -122,6 +121,21 @@ impl MigrationTrait for Migration {
             .await?;
 
         manager
+            .create_type(
+                Type::create()
+                    .as_enum(Alias::new("activity_level_type"))
+                    .values([
+                        Alias::new("Sedentary"),
+                        Alias::new("Light"),
+                        Alias::new("Moderate"),
+                        Alias::new("Heavy"),
+                        Alias::new("Intense"),
+                    ])
+                    .to_owned(),
+            )
+            .await?;
+
+        manager
             .create_table(
                 Table::create()
                     .table(User::Table)
@@ -137,12 +151,17 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(User::Password).string().not_null())
                     .col(
                         ColumnDef::new(User::Gender)
-                            .custom("gender_type")
+                            .custom("gender_type") // Utiliza el enum creado
                     )
                     .col(ColumnDef::new(User::Age).integer())
                     .col(ColumnDef::new(User::Weight).float())
                     .col(ColumnDef::new(User::Height).float())
                     .col(ColumnDef::new(User::FatPercentage).float())
+                    // --- Nuevo: Columna para el nivel de actividad ---
+                    .col(
+                        ColumnDef::new(User::ActivityLevel)
+                            .custom("activity_level_type") // Utiliza el nuevo enum
+                    )
                     .col(ColumnDef::new(User::DailyGoalId).integer())
                     .foreign_key(
                         ForeignKey::create()
@@ -153,7 +172,7 @@ impl MigrationTrait for Migration {
                     .to_owned(),
             )
             .await?;
-        // Create Day table
+
         manager
             .create_table(
                 Table::create()
@@ -185,7 +204,6 @@ impl MigrationTrait for Migration {
             )
             .await?;
 
-        // Create MealType enum
         manager
             .create_type(
                 Type::create()
@@ -195,7 +213,6 @@ impl MigrationTrait for Migration {
             )
             .await?;
 
-        // Create Meal table
         manager
             .create_table(
                 Table::create()
@@ -209,7 +226,7 @@ impl MigrationTrait for Migration {
                     )
                     .col(
                         ColumnDef::new(Meal::MealType)
-                            .custom("meal_type_name") 
+                            .custom("meal_type_name")
                             .not_null(),
                     )
                     .col(ColumnDef::new(Meal::DayId).integer().not_null())
@@ -223,7 +240,6 @@ impl MigrationTrait for Migration {
             )
             .await?;
 
-        // Create MealFood table
         manager
             .create_table(
                 Table::create()
@@ -267,7 +283,7 @@ impl MigrationTrait for Migration {
             .get_connection()
             .execute(Statement::from_string(
                 manager.get_database_backend(),
-                "DROP TYPE IF EXISTS meal_type".to_string(),
+                "DROP TYPE IF EXISTS meal_type_name CASCADE".to_string(), // Add CASCADE to drop dependent objects
             ))
             .await?;
 
@@ -277,6 +293,22 @@ impl MigrationTrait for Migration {
 
         manager
             .drop_table(Table::drop().table(User::Table).to_owned())
+            .await?;
+
+        manager
+            .get_connection()
+            .execute(Statement::from_string(
+                manager.get_database_backend(),
+                "DROP TYPE IF EXISTS activity_level_type CASCADE".to_string(),
+            ))
+            .await?;
+
+        manager
+            .get_connection()
+            .execute(Statement::from_string(
+                manager.get_database_backend(),
+                "DROP TYPE IF EXISTS gender_type CASCADE".to_string(),
+            ))
             .await?;
 
         manager

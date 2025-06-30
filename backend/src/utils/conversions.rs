@@ -11,6 +11,7 @@ pub fn to_dto(user: &Model) -> UserDTO {
         weight: user.weight,
         height: user.height,
         fat_percentage: user.fat_percentage,
+        activity_level: user.activity_level,
         daily_goal_id: user.daily_goal_id,
     }
 }
@@ -25,6 +26,7 @@ pub fn to_response(user: &Model) -> UserResponse {
         weight: user.weight,
         height: user.height,
         fat_percentage: user.fat_percentage,
+        activity_level: user.activity_level,
         daily_goal_id: user.daily_goal_id,
     }
 }

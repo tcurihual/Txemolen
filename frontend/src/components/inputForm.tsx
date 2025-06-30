@@ -76,7 +76,7 @@ export const BiometricsInput: React.FC<BiometricsInputProps> = ({
 
         <div className="flex items-center justify-center rounded-3xl w-full h-full border-[2.5px] border-gray-300 ">
             <div className="flex flex-1 h-full items-center justify-center border-r-[2.5px] border-gray-300 ">
-                <Icon className="w-12 h-12" style={{ color }} />
+                <Icon className="w-10 h-10 mb-1 mt-1" style={{ color }} />
             </div>
             <input
                 className={` flex-2 w-full h-full pl-8 text-2xl focus:outline-none focus:ring-0 ${error ? "border-red-500" : ""}`}

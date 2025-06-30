@@ -1,9 +1,24 @@
-import React, { createContext, useContext, type ReactNode } from "react"
+import React, {
+    createContext,
+    useContext,
+    useState,
+    type ReactNode,
+} from "react"
 import { useAuth } from "./AuthContext"
+import type {
+    BiometricsManagementResponse,
+    BiometricUpdateDTO,
+    DailyGoal,
+} from "../utils/types"
+import { useLoading } from "./LoadingContext"
 
 type BiometricsContextType = {
+    dailyGoal: DailyGoal | undefined
     BMR: () => Promise<number | undefined>
     TDEE: (activityLevel: number) => Promise<number | undefined>
+    biometricsManagement: (
+        data: BiometricUpdateDTO
+    ) => Promise<BiometricsManagementResponse>
 }
 
 const BiometricsContext = createContext<BiometricsContextType | undefined>(
@@ -13,13 +28,30 @@ const BiometricsContext = createContext<BiometricsContextType | undefined>(
 export const BiometricsProvider: React.FC<{ children: ReactNode }> = ({
     children,
 }) => {
-    const { User } = useAuth()
+    const { User, authenticatedFetch, updateVars } = useAuth()
+    const { withLoading } = useLoading()
+    const [dailyGoal, setDailyGoal] = useState<DailyGoal | undefined>(undefined)
+
+    const biometricsManagement = async (data: BiometricUpdateDTO) => {
+        return await withLoading(
+            authenticatedFetch(`/biometrics/user/${User?.id}`, {
+                method: "PUT",
+                body: JSON.stringify(data),
+            }).then(async (response) => {
+                const responseData: BiometricsManagementResponse =
+                    await response.json()
+                updateVars(responseData.User)
+                setDailyGoal(responseData.DailyGoal)
+                return responseData
+            })
+        )
+    }
 
     const BMR = async () => {
-        if (!User) return undefined
+        if (!User || !User.weight || !User.height || !User.age) return undefined
 
         if (User.fat_percentage) {
-            const leanMass = User.weight * (1 - User.fat_percentage / 100)
+            const leanMass = User?.weight * (1 - User.fat_percentage / 100)
             console.log("grasa")
 
             return 370 + 21.6 * leanMass
@@ -44,7 +76,9 @@ export const BiometricsProvider: React.FC<{ children: ReactNode }> = ({
     }
 
     return (
-        <BiometricsContext.Provider value={{ BMR, TDEE }}>
+        <BiometricsContext.Provider
+            value={{ dailyGoal, BMR, TDEE, biometricsManagement }}
+        >
             {children}
         </BiometricsContext.Provider>
     )

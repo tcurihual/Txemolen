@@ -58,6 +58,7 @@ pub async fn create(
         height: Set(user_data.height),
         fat_percentage: Set(user_data.fat_percentage),
         daily_goal_id: Set(user_data.daily_goal_id),
+        activity_level: Set(user_data.activity_level),
         ..Default::default()
     }
     .insert(&state.db)
@@ -89,6 +90,7 @@ pub async fn update(
         height: Set(user_data.height),
         fat_percentage: Set(user_data.fat_percentage),
         daily_goal_id: Set(user_data.daily_goal_id),
+        activity_level: Set(user_data.activity_level)
     }
     .update(&state.db)
     .await
