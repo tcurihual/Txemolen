@@ -89,7 +89,7 @@ const Header: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                     )}
                 </AnimatePresence>
             </div>
-            <div className="pl-[4%] pr-[4%] h-[100%]">{children}</div>
+            <div className="pl-[4%]  h-[100%]">{children}</div>
         </div>
     )
 }

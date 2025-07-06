@@ -24,6 +24,14 @@ export interface Food {
     carbohydrates: number
 }
 
+export interface ConsumedFood {
+    food: Food
+    kcal: number
+    carbs: number
+    protein: number
+    fat: number
+}
+
 export interface User {
     id: number
     name: string

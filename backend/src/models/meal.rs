@@ -14,7 +14,7 @@ pub struct Model {
 #[derive(Debug, Clone, PartialEq, EnumIter, DeriveActiveEnum, Serialize, Deserialize)]
 #[sea_orm(
     rs_type = "String",
-    db_type = "String(Some(20))",
+    db_type = "Enum",
     enum_name = "meal_type"
 )]
 pub enum MealType {
@@ -56,3 +56,18 @@ impl Related<super::meal_food::Entity> for Entity {
 }
 
 impl ActiveModelBehavior for ActiveModel {}
+
+impl std::str::FromStr for MealType {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "Breakfast" => Ok(MealType::Breakfast),
+            "MorningSnack" => Ok(MealType::MorningSnack),
+            "Lunch" => Ok(MealType::Lunch),
+            "Dinner" => Ok(MealType::Dinner),
+            "EveningSnack" => Ok(MealType::EveningSnack),
+            _ => Err(()),
+        }
+    }
+}

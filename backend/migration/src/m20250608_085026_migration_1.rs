@@ -207,8 +207,13 @@ impl MigrationTrait for Migration {
         manager
             .create_type(
                 Type::create()
-                .as_enum(Alias::new("meal_type_name"))
-                .values([Alias::new("Breakfast"), Alias::new("MorningSnack"), Alias::new("Lunch"), Alias::new("EveningSnack"), Alias::new("Dinner")])
+                .as_enum(Alias::new("meal_type"))
+                .values([
+                    Alias::new("Breakfast"), 
+                    Alias::new("MorningSnack"), 
+                    Alias::new("Lunch"), 
+                    Alias::new("EveningSnack"), 
+                    Alias::new("Dinner")])
                 .to_owned(),
             )
             .await?;
@@ -226,7 +231,7 @@ impl MigrationTrait for Migration {
                     )
                     .col(
                         ColumnDef::new(Meal::MealType)
-                            .custom("meal_type_name")
+                            .custom("meal_type")
                             .not_null(),
                     )
                     .col(ColumnDef::new(Meal::DayId).integer().not_null())
@@ -283,7 +288,7 @@ impl MigrationTrait for Migration {
             .get_connection()
             .execute(Statement::from_string(
                 manager.get_database_backend(),
-                "DROP TYPE IF EXISTS meal_type_name CASCADE".to_string(), // Add CASCADE to drop dependent objects
+                "DROP TYPE IF EXISTS meal_type CASCADE".to_string(), // Add CASCADE to drop dependent objects
             ))
             .await?;
 

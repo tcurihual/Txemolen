@@ -59,7 +59,7 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({
         >
             {children}
             {isOpen && modalContent && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-xs">
                     <div
                         className={`w-full ${modalSizes[modalContent.size || "md"]} bg-white rounded-lg shadow-xl overflow-hidden`}
                     >
