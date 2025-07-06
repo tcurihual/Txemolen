@@ -1,6 +1,7 @@
 import React, {
     createContext,
     useContext,
+    useEffect,
     useState,
     type ReactNode,
 } from "react"
@@ -19,6 +20,9 @@ type BiometricsContextType = {
     biometricsManagement: (
         data: BiometricUpdateDTO
     ) => Promise<BiometricsManagementResponse>
+    getDailyGoal: (
+        data: BiometricUpdateDTO
+    ) => Promise<BiometricsManagementResponse>
 }
 
 const BiometricsContext = createContext<BiometricsContextType | undefined>(
@@ -32,6 +36,19 @@ export const BiometricsProvider: React.FC<{ children: ReactNode }> = ({
     const { withLoading } = useLoading()
     const [dailyGoal, setDailyGoal] = useState<DailyGoal | undefined>(undefined)
 
+    const getDailyGoal = async (): Promise<BiometricsManagementResponse> => {
+        return withLoading(
+            authenticatedFetch(`/biometrics/user/${User?.id}`, {
+                method: "GET",
+            }).then(async (response) => {
+                const responseData: BiometricsManagementResponse =
+                    await response.json()
+                setDailyGoal(responseData.daily_goal)
+                return responseData
+            })
+        )
+    }
+
     const biometricsManagement = async (data: BiometricUpdateDTO) => {
         return await withLoading(
             authenticatedFetch(`/biometrics/user/${User?.id}`, {
@@ -40,8 +57,8 @@ export const BiometricsProvider: React.FC<{ children: ReactNode }> = ({
             }).then(async (response) => {
                 const responseData: BiometricsManagementResponse =
                     await response.json()
-                updateVars(responseData.User)
-                setDailyGoal(responseData.DailyGoal)
+                updateVars(responseData.user)
+                setDailyGoal(responseData.daily_goal)
                 return responseData
             })
         )
@@ -52,15 +69,12 @@ export const BiometricsProvider: React.FC<{ children: ReactNode }> = ({
 
         if (User.fat_percentage) {
             const leanMass = User?.weight * (1 - User.fat_percentage / 100)
-            console.log("grasa")
 
             return 370 + 21.6 * leanMass
         } else {
             if (User.gender === "Male") {
-                console.log("male")
                 return 10 * User.weight + 6.25 * User.height - 5 * User.age + 5 // Mifflin-St Jeor
             } else {
-                console.log("female")
                 return (
                     10 * User.weight + 6.25 * User.height - 5 * User.age - 161
                 )
@@ -68,16 +82,39 @@ export const BiometricsProvider: React.FC<{ children: ReactNode }> = ({
         }
     }
 
-    const TDEE = async (activityLevel: number) => {
+    const TDEE = async () => {
         const bmr = await BMR()
-        console.log(bmr)
         if (!bmr) return undefined
-        return bmr * activityLevel
+        const activityLevelFactors: Record<string, number> = {
+            Sedentary: 1.2,
+            Light: 1.375,
+            Medium: 1.55,
+            High: 1.725,
+            VeryHigh: 1.9,
+        }
+        const factor =
+            activityLevelFactors[User?.activity_level ?? "Sedentary"] ?? 1.2
+        return bmr * factor
     }
+
+    useEffect(() => {
+        const fetchDailyGoal = async () => {
+            try {
+                await getDailyGoal()
+            } catch (error) {
+                console.error("Error fetching daily goal:", error)
+                setDailyGoal(undefined)
+            }
+        }
+
+        if (User?.id) {
+            fetchDailyGoal()
+        }
+    }, [User?.id, User?.daily_goal_id])
 
     return (
         <BiometricsContext.Provider
-            value={{ dailyGoal, BMR, TDEE, biometricsManagement }}
+            value={{ dailyGoal, BMR, TDEE, biometricsManagement, getDailyGoal }}
         >
             {children}
         </BiometricsContext.Provider>

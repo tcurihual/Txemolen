@@ -87,8 +87,8 @@ export interface AuthError {
 }
 
 export interface BiometricsManagementResponse {
-    User: UserResponse
-    DailyGoal: DailyGoal
+    user: UserResponse
+    daily_goal: DailyGoal
 }
 
 export type LoginFormData = z.infer<typeof loginFormSchema>

@@ -94,3 +94,29 @@ pub async fn biometrics_management(
         daily_goal: current_daily_goal_model, 
     }))
 }
+
+pub async fn get_bio_by_id(
+    State(state): State<AppState>,
+    VerifiedOwner(user_id): VerifiedOwner,
+) -> Result<Json<BiometricManagementResponse>, (StatusCode, String)> {
+    let user_model = user::Entity::find_by_id(user_id)
+        .one(&state.db)
+        .await
+        .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?
+        .ok_or((StatusCode::NOT_FOUND, "User not found".to_string()))?;
+
+    let daily_goal_model = if let Some(daily_goal_id) = user_model.daily_goal_id {
+        daily_goal::Entity::find_by_id(daily_goal_id)
+            .one(&state.db)
+            .await
+            .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?
+            .ok_or((StatusCode::NOT_FOUND, "Daily goal not found".to_string()))?
+    } else {
+        return Err((StatusCode::NOT_FOUND, "Daily goal not found".to_string()));
+    };
+
+    Ok(Json(BiometricManagementResponse {
+        user: conversions::to_response(&user_model),
+        daily_goal: daily_goal_model,
+    }))
+}
