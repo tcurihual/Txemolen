@@ -1,30 +1,25 @@
 import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
-import { BrowserRouter } from "react-router-dom"
 
 import "./index.css"
 
-import Menu from "./layouts/Menu.tsx"
-import Header from "./layouts/Header.tsx"
-import WebRouter from "./router.tsx"
+import AppRouter from "./router.tsx"
+
 import { ModalProvider } from "./contexts/ModalContext.tsx"
 import { LoadingProvider } from "./contexts/LoadingContext.tsx"
 import { AuthProvider } from "./contexts/AuthContext.tsx"
+import { BiometricsProvider } from "./contexts/BioContext.tsx"
 
 createRoot(document.getElementById("root")!).render(
     <StrictMode>
-        <BrowserRouter>
-            <LoadingProvider>
-                <AuthProvider>
+        <LoadingProvider>
+            <AuthProvider>
+                <BiometricsProvider>
                     <ModalProvider>
-                        <Menu>
-                            <Header>
-                                <WebRouter />
-                            </Header>
-                        </Menu>
+                        <AppRouter />
                     </ModalProvider>
-                </AuthProvider>
-            </LoadingProvider>
-        </BrowserRouter>
+                </BiometricsProvider>
+            </AuthProvider>
+        </LoadingProvider>
     </StrictMode>
 )

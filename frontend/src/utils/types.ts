@@ -1,9 +1,18 @@
 import { z } from "zod/v4"
-import type { loginFormSchema, registerFormSchema } from "./validations"
+import type {
+    activityLevelSchema,
+    biometricsFormSchema,
+    loginFormSchema,
+    registerFormSchema,
+} from "./validations"
 
 export const SERVER_URL = import.meta.env.VITE_SERVER_URL as string
 
 export type MealType = "Desayuno" | "Almuerzo" | "Cena" | "Snack"
+
+export type GenderType = "Male" | "Female" | false
+
+export type ActivityLevelType = z.infer<typeof activityLevelSchema>
 
 export interface Food {
     code: string
@@ -20,17 +29,27 @@ export interface User {
     name: string
     email: string
     password: string
-    gender: string
-    age: number
-    weight: number
-    height: number
-    fat_percentage?: number
-    daily_goal_id: number
+    gender: GenderType | null
+    age: number | null
+    weight: number | null
+    height: number | null
+    fat_percentage?: number | null
+    activity_level?: ActivityLevelType | null
+    daily_goal_id: number | null
 }
 
 export interface UserDTO extends Omit<User, "id" | "daily_goal_id"> {}
 
 export interface UserResponse extends Omit<User, "password"> {}
+
+export interface BiometricUpdateDTO {
+    gender: GenderType
+    age: number
+    weight: number
+    height: number
+    fat_percentage?: number | null
+    activity_level: ActivityLevelType
+}
 
 export interface Meal {
     id: number
@@ -67,8 +86,14 @@ export interface AuthError {
     message: string | undefined
 }
 
+export interface BiometricsManagementResponse {
+    user: UserResponse
+    daily_goal: DailyGoal
+}
+
 export type LoginFormData = z.infer<typeof loginFormSchema>
 export type RegisterFormData = z.infer<typeof registerFormSchema>
+export type BiometricsFormData = z.infer<typeof biometricsFormSchema>
 
 export interface CreateFoodPayload extends Omit<Food, "code"> {}
 export interface CreateUserPayload extends Omit<User, "id" | "daily_goal_id"> {

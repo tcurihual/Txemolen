@@ -47,7 +47,7 @@ async fn main() {
 
     let cors = CorsLayer::new()
         .allow_origin(Any)
-        .allow_methods([Method::GET, Method::POST, Method::OPTIONS])
+        .allow_methods([Method::GET, Method::POST, Method::PUT, Method::DELETE, Method::OPTIONS])
         .allow_headers([
         header::AUTHORIZATION,
         header::CONTENT_TYPE,
@@ -55,7 +55,8 @@ async fn main() {
 
     let app = Router::new()
         .merge(routes::user_routes::user_routes(jwt_config.clone()))
-        .merge(routes::auth_routes::auth_routes(jwt_config))
+        .merge(routes::auth_routes::auth_routes(jwt_config.clone()))
+        .merge(routes::biometrics_routes::biometrics_routes(jwt_config))
         .with_state(state)
         .layer(cors);
 

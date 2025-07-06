@@ -147,7 +147,7 @@ const Session: React.FC = () => {
                                 />
                                 <FormInput
                                     label="Verificar Contraseña"
-                                    name="Password"
+                                    name="password"
                                     placeholder="Repita su contraseña"
                                     register={registerForm.register(
                                         "verifyPassword"
