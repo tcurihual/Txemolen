@@ -47,7 +47,6 @@ pub async fn create(
         "Gender is required".into(),
     ))?;
 
-
     let user = ActiveModel {
         name: Set(user_data.name),
         email: Set(user_data.email),

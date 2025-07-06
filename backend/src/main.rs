@@ -56,7 +56,8 @@ async fn main() {
     let app = Router::new()
         .merge(routes::user_routes::user_routes(jwt_config.clone()))
         .merge(routes::auth_routes::auth_routes(jwt_config.clone()))
-        .merge(routes::biometrics_routes::biometrics_routes(jwt_config))
+        .merge(routes::biometrics_routes::biometrics_routes(jwt_config.clone()))
+        .merge(routes::food_routes::food_routes(jwt_config.clone()))
         .with_state(state)
         .layer(cors);
 

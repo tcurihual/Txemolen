@@ -42,4 +42,10 @@ impl Related<super::daily_goal::Entity> for Entity {
     }
 }
 
+impl Related<super::meal::Entity> for Entity {
+    fn to() -> RelationDef {
+        super::meal::Relation::Day.def()
+    }
+}
+
 impl ActiveModelBehavior for ActiveModel {}
