@@ -67,7 +67,13 @@ async fn main() {
             listener.set_nonblocking(true).unwrap();
             TcpListener::from_std(listener).unwrap()
         }
-        None => TcpListener::bind("127.0.0.1:3000").await.unwrap(),
+        None => {
+            let port = env::var("PORT")
+                .unwrap_or_else(|_| "3000".to_string())
+                .parse::<u16>()
+                .expect("PORT debe ser un número");
+            TcpListener::bind(("0.0.0.0", port)).await.unwrap()
+        }
     };
 
     println!("🚀 Servidor escuchando en {}", listener.local_addr().unwrap());
