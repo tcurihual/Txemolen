@@ -1,0 +1,120 @@
+import { z } from "zod/v4"
+import type {
+    activityLevelSchema,
+    biometricsFormSchema,
+    loginFormSchema,
+    registerFormSchema,
+} from "./validations"
+
+export const SERVER_URL = import.meta.env.VITE_SERVER_URL as string
+
+export type MealType = "Desayuno" | "Almuerzo" | "Cena" | "Snack"
+
+export type GenderType = "Male" | "Female" | false
+
+export type ActivityLevelType = z.infer<typeof activityLevelSchema>
+
+export interface Food {
+    code: string
+    name: string
+    serving_size: number
+    energy_kcal: number
+    proteins: number
+    fat: number
+    carbohydrates: number
+}
+
+export interface ConsumedFood {
+    food: Food
+    kcal: number
+    carbs: number
+    protein: number
+    fat: number
+}
+
+export interface User {
+    id: number
+    name: string
+    email: string
+    password: string
+    gender: GenderType | null
+    age: number | null
+    weight: number | null
+    height: number | null
+    fat_percentage?: number | null
+    activity_level?: ActivityLevelType | null
+    daily_goal_id: number | null
+}
+
+export interface UserDTO extends Omit<User, "id" | "daily_goal_id"> {}
+
+export interface UserResponse extends Omit<User, "password"> {}
+
+export interface BiometricUpdateDTO {
+    gender: GenderType
+    age: number
+    weight: number
+    height: number
+    fat_percentage?: number | null
+    activity_level: ActivityLevelType
+}
+
+export interface Meal {
+    id: number
+    meal_type: MealType
+    day_id: number
+}
+
+export interface MealFood {
+    meal_id: number
+    food_code: string
+    servings: number
+}
+
+export interface Day {
+    id: number
+    date: string
+    completed: boolean
+    user_id: number
+    daily_goal_id: number
+}
+
+export interface DailyGoal {
+    id: number
+    kcal: number
+    protein: number
+    carbos: number
+    fat: number
+}
+
+export type AuthInstance = "Login" | "Register"
+
+export interface AuthError {
+    instance: AuthInstance
+    message: string | undefined
+}
+
+export interface BiometricsManagementResponse {
+    user: UserResponse
+    daily_goal: DailyGoal
+}
+
+export type LoginFormData = z.infer<typeof loginFormSchema>
+export type RegisterFormData = z.infer<typeof registerFormSchema>
+export type BiometricsFormData = z.infer<typeof biometricsFormSchema>
+
+export interface CreateFoodPayload extends Omit<Food, "code"> {}
+export interface CreateUserPayload extends Omit<User, "id" | "daily_goal_id"> {
+    password_confirmation: string
+}
+export interface CreateMealPayload extends Omit<Meal, "id"> {}
+export interface CreateDailyGoalPayload extends Omit<DailyGoal, "id"> {}
+
+export interface MealWithFoods extends Meal {
+    foods: Array<Food & { servings: number }>
+}
+
+export interface DayWithMeals extends Day {
+    meals: MealWithFoods[]
+    daily_goal: DailyGoal
+}

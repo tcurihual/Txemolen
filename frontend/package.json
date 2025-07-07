@@ -10,14 +10,22 @@
         "format": "prettier --write ."
     },
     "dependencies": {
+        "@hookform/resolvers": "^5.1.1",
+        "@number-flow/react": "^0.5.10",
         "@tailwindcss/vite": "^4.1.8",
+        "@types/node": "^22.15.30",
+        "js-cookie": "^3.0.5",
         "motion": "^12.15.0",
         "react": "^19.1.0",
         "react-circular-progressbar": "^2.2.0",
         "react-dom": "^19.1.0",
-        "tailwindcss": "^4.1.8"
+        "react-hook-form": "^7.58.0",
+        "react-router-dom": "^7.6.2",
+        "tailwindcss": "^4.1.8",
+        "zod": "^3.25.67"
     },
     "devDependencies": {
+        "@types/js-cookie": "^3.0.6",
         "@types/react": "^19.1.2",
         "@types/react-dom": "^19.1.2",
         "@vitejs/plugin-react-swc": "^3.9.0",
